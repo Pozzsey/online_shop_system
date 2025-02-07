@@ -61,18 +61,13 @@
                                                         alt="Product Image" width="50" height="50"
                                                         class="img-fluid rounded">
                                                 </td>
-                                                <td>
-                                                    <a href="{{ route('vendor.product.edit', $product->id) }}"
-                                                        class="btn btn-warning btn-sm">Edit</a>
-
-                                                    <form action="{{ route('vendor.product.destroy', $product->id) }}"
-                                                        method="POST" style="display:inline;">
+                                                <td class="text-center">
+                                                    <a href="{{ route('vendor.product.edit', $product->id) }}" class="btn btn-warning">Edit</a>
+                                                    <form action="{{ route('vendor.product.destroy', $product->id) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm"
-                                                            onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+                                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
                                                     </form>
-
                                                 </td>
                                             </tr>
                                         @endforeach
