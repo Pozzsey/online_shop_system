@@ -60,6 +60,7 @@ Route::middleware([VendorMiddleware::class])->group(function () {
 
 Route::get('/home/{name}', [ShopController::class, 'list_page'])->name('home.list');
 Route::get('/shop/{name}', [ShopController::class, 'shoping'])->name('shop');
+Route::get('/detail/{name}/{id}', [ShopController::class, 'detail'])->name('shop.detail');
 
 // Route::get('/cart/index/{name}', [CartController::class, 'index'])->name('card.index');
 Route::get('/cart/index/{name}', [CartController::class, 'index'])->name('cart.index');

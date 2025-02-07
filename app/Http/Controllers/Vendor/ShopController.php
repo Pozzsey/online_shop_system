@@ -29,4 +29,11 @@ class ShopController extends Controller
         return view('user.shop.shop' , compact('products', 'vendor'));
     }
 
+    public function detail($name, $id)
+    {
+        $vendor = Vendor::where('shop_name', $name)->firstOrFail();
+        $product = Product::where('id', $id)->firstOrFail();
+
+        return view('user.shop.detail', compact('vendor', 'product'));
+    }
 }

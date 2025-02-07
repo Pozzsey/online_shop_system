@@ -41,7 +41,7 @@
         </div>
     </section>
 
-    <section id="product1" class="section-p1">
+    {{-- <section id="product1" class="section-p1">
         <h2>Featured Products</h2>
         <p>Summer Collection New Modern Design</p>
         <div class="pro-container">
@@ -69,7 +69,7 @@
                 </div>
             @endforeach
         </div>
-    </section>
+    </section> --}}
 
 
     <section id="banner" class="section-m1">
