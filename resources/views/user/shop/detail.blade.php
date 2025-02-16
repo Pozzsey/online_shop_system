@@ -43,36 +43,55 @@
 
 <script>
     function addToCart(productId) {
-        const size = document.getElementById('size').value;
-        const quantity = document.getElementById('quantity').value;
+    const size = document.getElementById('size').value;
+    const quantity = document.getElementById('quantity').value;
 
-        if(size === "Select Size") {
-            alert("Please select a size.");
-            return;
-        }
-
-        const data = {
-            product_id: productId,
-            size: size,
-            quantity: quantity
-        };
-
-        fetch('/cart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            alert("Product added to cart!");
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    if (size === "Select Size") {
+        alert("Please select a size.");
+        return;
     }
+
+    const data = {
+        product_id: productId,
+        size: size,
+        quantity: quantity
+    };
+
+    fetch('/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+
+        // Show SweetAlert message with a 100 ms delay
+        Swal.fire({
+            title: 'Success!',
+            text: 'Product added to cart!',
+            icon: 'success',
+            timer: 1000,
+            timerProgressBar: true,
+            didClose: () => {
+                // After SweetAlert closes, redirect to the provided route
+                window.location.href = data.redirect; // Use the redirect route from the server
+            }
+        });
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // Optionally, show an error message
+        Swal.fire({
+            title: 'Error',
+            text: 'Something went wrong!',
+            icon: 'error'
+        });
+    });
+}
+
 </script>
 @endsection

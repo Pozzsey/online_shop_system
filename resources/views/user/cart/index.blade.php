@@ -35,13 +35,22 @@
                         @method('DELETE')
                     </form>
                 </td>
-                <td><img src="{{ asset('storage/' . $item->product->image_url) }}" alt="{{ $item->product->name }}"
-                        style="width: 50px"></td>
+                <td>
+                    <img src="{{ asset('storage/' . $item->product->image_url) }}"
+                         alt="{{ $item->product->name }}"
+                         style="width: 50px">
+                </td>
                 <td>{{ $item->product->name }}</td>
                 <td class="size">{{ $item->size }}</td>
-                <td class="price">{{ $item->product->price }}</td>
-                <td><input type="number" min="1" style="text-align: center; width: 50px;" value="{{ $item->quantity }}" class="quantity" data-id="{{ $item->id }}"></td>
-                <td class="subtotal" style="text-align: center">{{ $item->product->price * $item->quantity }}</td>
+                <td class="price">{{ number_format($item->product->price, 2) }}</td>
+                <td>
+                    <input type="number" min="1" class="quantity" data-id="{{ $item->id }}"
+                           value="{{ $item->quantity }}"
+                           style="text-align: center; width: 50px;">
+                </td>
+                <td class="subtotal" style="text-align: center">
+                    {{ number_format($item->product->price * $item->quantity, 2) }}
+                </td>
             </tr>
             @endforeach
         </tbody>
@@ -52,7 +61,7 @@
     <div id="coupon">
         <h3>Apply Coupon</h3>
         <div>
-            <input type="text" name="" id="" placeholder="Enter Your Coupon">
+            <input type="text" placeholder="Enter Your Coupon">
             <button class="normal">Apply</button>
         </div>
     </div>
@@ -63,7 +72,7 @@
             <tbody>
                 <tr>
                     <td>Cart Subtotal</td>
-                    <td id="cart-subtotal"></td>
+                    <td id="cart-subtotal">$0.00</td>
                 </tr>
                 <tr>
                     <td>Shipping</td>
@@ -71,7 +80,7 @@
                 </tr>
                 <tr>
                     <td><strong>Total</strong></td>
-                    <td id="cart-total"><strong>$ </strong></td>
+                    <td id="cart-total"><strong>$0.00</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -83,95 +92,94 @@
 <script>
 $(document).ready(function() {
 
+    function updateTotals() {
+        let cartSubtotal = 0;
+
+        $('.quantity').each(function() {
+            let $row = $(this).closest('tr');
+            let price = parseFloat($row.find('.price').text().replace(/,/g, ''));
+            let quantity = parseInt($(this).val());
+            let subtotal = price * quantity;
+
+            $row.find('.subtotal').text(subtotal.toFixed(2));
+
+            cartSubtotal += subtotal;
+        });
+
+        $('#cart-subtotal').text('$' + cartSubtotal.toFixed(2));
+        $('#cart-total').html('<strong>$' + cartSubtotal.toFixed(2) + '</strong>');
+    }
+
+    updateTotals();
+
     $('.quantity').on('input', function() {
-        var $row = $(this).closest('tr');
-        var price = parseFloat($row.find('.price').text());
-        var quantity = $(this).val();
-        var subtotal = price * quantity;
-        $row.find('.subtotal').text(subtotal.toFixed(2));
+        let $row = $(this).closest('tr');
+        let quantity = $(this).val();
+        let itemId = $(this).data('id');
+        let shopName = '{{ Auth::user()->vendor->shop_name ?? '' }}';
 
         updateTotals();
 
-        // AJAX request to update cart item quantity
-           // Get the data-id attribute
-           var itemId = $(this).data('id');
-        var shopName = '{{ Auth::user()->vendor->shop_name }}';
-
-        // AJAX request to update cart item quantity
         $.ajax({
             url: `/cart/update/${shopName}/${itemId}`,
             method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                quantity: quantity
-            },
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { quantity: quantity },
             success: function(response) {
                 console.log(response);
             },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
+            error: function(xhr) {
+                console.error(xhr.responseText);
             }
         });
     });
 
-    function updateTotals() {
-        var cartSubtotal = 0;
-        var cartTotal = 0;
-
-        $('.quantity').each(function() {
-            var $row = $(this).closest('tr');
-            var price = parseFloat($row.find('.price').text());
-            var quantity = $(this).val();
-            var subtotal = price * quantity;
-
-            cartSubtotal += subtotal;
-            cartTotal += price * quantity;
-        });
-
-        $('#cart-subtotal').text(cartSubtotal.toFixed(2));
-        $('#cart-total').text('$ ' + cartTotal.toFixed(2));
-    }
-    updateTotals();
-
     $('#place-order').on('click', function() {
-        var orderData = [];
-        console.log(orderData);
+        let orderData = [];
 
         $('.quantity').each(function() {
-            var $row = $(this).closest('tr');
-            var productId = $row.find('.quantity').data('id');
-            var size = $row.find('.size').text();
-            console.log(size);
+            let $row = $(this).closest('tr');
+            let productId = $(this).data('id');
+            let size = $row.find('.size').text().trim();
+            let quantity = $(this).val();
+            let price = parseFloat($row.find('.price').text().replace(/,/g, ''));
 
-            var quantity = $(this).val();
-            var price = parseFloat($row.find('.price').text());
-
-            orderData.push({
-                product_id: productId,
-                size: size,
-                quantity: quantity,
-                price: price
-            });
+            orderData.push({ product_id: productId, size: size, quantity: quantity, price: price });
         });
 
         $.ajax({
-            url: '/order',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                orderItems: orderData
-            },
-            success: function(response) {
-                console.log(response);
-                alert("Order placed successfully!");
-                window.location.href = '/order/success';
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-                alert("Failed to place order. Please try again.");
+    url: '/order',
+    method: 'POST',
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    },
+    data: { orderItems: orderData },
+    success: function(response) {
+        // Show SweetAlert message
+        Swal.fire({
+            title: 'Order Placed!',
+            text: 'Your order has been successfully placed.',
+            icon: 'success',
+            timer: 1000, // The alert will close after 1 second (adjust as needed)
+            timerProgressBar: true,
+            didClose: () => {
+                // Redirect to the shop page after the alert closes
+                window.location.href = response.redirect; // Redirect based on the server's response
             }
         });
+    },
+    error: function(xhr) {
+        console.error(xhr.responseText);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Failed to place order. Please add item to cart first.',
+            icon: 'error'
+        });
+    }
+});
+
     });
+
 });
 </script>
 

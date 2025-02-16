@@ -39,7 +39,7 @@
                 @endforeach
             @endif
         </div>
-    </section> 
+    </section>
 
     {{-- <section id="product1" class="section-p1">
         <h2>Featured Products</h2>
@@ -148,29 +148,49 @@
 <script>
 
     document.querySelectorAll('.add-to-cart-form').forEach(form => {
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
+        form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
 
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            });
-
-            if (response.ok) {
-                alert('Item added to cart!');
-            } else {
-                alert('Failed to add item to cart.');
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             }
-        } catch (error) {
-            console.error(error);
-            alert('An error occurred.');
+        });
+
+        if (response.ok) {
+            // Success message with SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: 'Item added to cart!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                // Redirect to the shop route after showing the success message
+                window.location.href = '/shop';
+            });
+        } else {
+            // Error message with SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to add item to cart.',
+                text: 'Please try again later.'
+            });
         }
-    });
+    } catch (error) {
+        console.error(error);
+        // General error message with SweetAlert
+        Swal.fire({
+            icon: 'error',
+            title: 'An error occurred.',
+            text: 'Please try again later.'
+        });
+    }
+});
+
 });
 
 </script>

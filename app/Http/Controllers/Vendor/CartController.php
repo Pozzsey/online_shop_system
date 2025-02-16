@@ -85,9 +85,11 @@ public function addToCart(Request $request)
 
 
     return response()->json([
-        'message' => 'Product added to cart', 'cart' => $cart,
-        'redirect' => route('cart.index', ['name' => Auth::user()->vendor->shop_name])
+        'message' => 'Product added to cart',
+        'cart' => $cart,
+        'redirect' => route('shop', ['name' => Auth::user()->vendor->shop_name])
     ]);
+
 }
 
 

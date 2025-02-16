@@ -64,17 +64,17 @@ Route::get('/shop/{name}', [ShopController::class, 'shoping'])->name('shop');
 Route::get('/detail/{name}/{id}', [ShopController::class, 'detail'])->name('shop.detail');
 Route::post('/cart', [CartController::class, 'addToCart']);
 // Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::delete('/cart/remove/{id}', [CartController::class,'destroy'])->name('cart.destroy');
+Route::delete('/cart/remove/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
 
 // Route::get('/cart/index ', [CartController::class, 'index'])->name('card.index');
 Route::get('/cart/index/{name}', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/store/{name}', [CartController::class,'store'])->name('cart.store');
+Route::post('/cart/store/{name}', [CartController::class, 'store'])->name('cart.store');
 Route::Post('/cart/update/{name}/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::post('order', [OrderController::class, 'store'])->name('order.store');
 
 // ------------------------- User Routes ---------------------------------------
 Route::group(['middleware' => ['user']], function () {
     Route::get('/vendor/{vendorId}/products', [CustomerController::class, 'viewVendorProducts'])->name('customer.viewVendorProducts');
-    Route::post('order', [OrderController::class, 'store'])->name('order.store');
 });
 
 

@@ -11,9 +11,9 @@
             <li><a class="{{ request()->routeIs('home.list') ? 'active' : '' }}"
                     href="{{ route('home.list', ['name' => Auth::user()->vendor->shop_name]) }}">Home</a></li>
             <li><a class="{{ request()->routeIs('shop') ? 'active' : '' }}" href="{{ route('shop', ['name' => Auth::user()->vendor->shop_name]) }}">Shop</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
             <li id="lg-bag"><a class="{{ request()->routeIs('cart.index') ? 'active' : '' }}" href="{{ route('cart.index',['name' => Auth::user()->vendor->shop_name]  ) }}"><i class="far fa-shopping-bag"></i></a></li>
             <a href="#" id="close"><i class="far fa-times"></i></a>
         </ul>
