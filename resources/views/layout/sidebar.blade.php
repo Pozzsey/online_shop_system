@@ -128,6 +128,7 @@
                         <p>Link Page</p>
                         <span class="badge badge-success"></span>
                     </a>
+
                 </li>
             </ul>
         </div>
@@ -135,3 +136,5 @@
     @elseif(Auth::user()->is_role == 0)
     @endif
 </div>
+
+

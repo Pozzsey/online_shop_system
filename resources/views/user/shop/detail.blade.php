@@ -27,18 +27,52 @@
         <h6>Home / T-Shirt</h6>
         <h4>{{ $product->name }}</h4>
         <h2>${{ $product->price }}</h2>
-        <select>
+        <select id="size">
             <option>Select Size</option>
             <option>S</option>
             <option>M</option>
             <option>L</option>
             <option>XL</option>
         </select>
-        <input type="number" value="1" min="1">
-        <button class="normal">Add To Cart</button>
+        <input type="number" id="quantity" value="1" min="1">
+        <button class="normal" onclick="addToCart({{ $product->id }})">Add To Cart</button>
         <h4>Product Details</h4>
         <span>{{ $product->description }}</span>
     </div>
 </section>
-</section>
+
+<script>
+    function addToCart(productId) {
+        const size = document.getElementById('size').value;
+        const quantity = document.getElementById('quantity').value;
+
+        if(size === "Select Size") {
+            alert("Please select a size.");
+            return;
+        }
+
+        const data = {
+            product_id: productId,
+            size: size,
+            quantity: quantity
+        };
+
+        fetch('/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert("Product added to cart!");
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 @endsection

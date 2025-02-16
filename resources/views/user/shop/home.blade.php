@@ -22,7 +22,7 @@
                 <p>No products available for this vendor.</p>
             @else
                 @foreach ($products as $product)
-                    <div class="pro">
+                    <div class="pro" onclick="window.location.href='{{ route('shop.detail', ['name' => Auth::user()->vendor->shop_name, 'id' => $product->id]) }}';">
                         <img src="{{ asset('storage/' . $product->image_url) }}" alt="{{ $product->name }}">
                         <div class="des">
                             <span>{{ $product->brand }}</span>
@@ -34,12 +34,12 @@
                             </div>
                             <h4>${{ $product->price }}</h4>
                         </div>
-                        <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                        <a href="{{ route('shop.detail', ['name' => Auth::user()->vendor->shop_name, 'id' => $product->id]) }}"><i class="fal fa-shopping-cart cart"></i></a>
                     </div>
                 @endforeach
             @endif
         </div>
-    </section>
+    </section> 
 
     {{-- <section id="product1" class="section-p1">
         <h2>Featured Products</h2>
@@ -146,6 +146,7 @@
 
 @section('scripts')
 <script>
+
     document.querySelectorAll('.add-to-cart-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();

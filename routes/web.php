@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Customer\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Vendor\CartController;
 use App\Http\Controllers\Vendor\CategoryController;
 use App\Http\Controllers\Vendor\ProductController;
@@ -14,10 +15,10 @@ use App\Http\Middleware\VendorMiddleware;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', [AuthController::class, 'login']);
+Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/login_post', [AuthController::class, 'login_post']);
 
-Route::get('/registration', [AuthController::class, 'registration']);
+Route::get('/registration', [AuthController::class, 'registration'])->name('register');
 Route::post('/registration_post', [AuthController::class, 'registration_post']);
 
 // ------------------------- Super Admin Routes ---------------------------------------
@@ -58,19 +59,23 @@ Route::middleware([VendorMiddleware::class])->group(function () {
 
 });
 
-Route::get('/home/{name}', [ShopController::class, 'list_page'])->name('home.list');
+Route::get('home/{name}', [ShopController::class, 'list_page'])->name('home.list');
 Route::get('/shop/{name}', [ShopController::class, 'shoping'])->name('shop');
 Route::get('/detail/{name}/{id}', [ShopController::class, 'detail'])->name('shop.detail');
+Route::post('/cart', [CartController::class, 'addToCart']);
+// Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::delete('/cart/remove/{id}', [CartController::class,'destroy'])->name('cart.destroy');
 
-// Route::get('/cart/index/{name}', [CartController::class, 'index'])->name('card.index');
+// Route::get('/cart/index ', [CartController::class, 'index'])->name('card.index');
 Route::get('/cart/index/{name}', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/store/{name}', [CartController::class,'store'])->name('cart.store');
-
+Route::Post('/cart/update/{name}/{id}', [CartController::class, 'update'])->name('cart.update');
 
 // ------------------------- User Routes ---------------------------------------
-Route::group(['middleware' => 'user'], function () {
-    // Route::get('user/', [DashboardController::class, 'dashboard']);
+Route::group(['middleware' => ['user']], function () {
     Route::get('/vendor/{vendorId}/products', [CustomerController::class, 'viewVendorProducts'])->name('customer.viewVendorProducts');
+    Route::post('order', [OrderController::class, 'store'])->name('order.store');
 });
+
 
 Route::get('logout', [AuthController::class, 'logout']);

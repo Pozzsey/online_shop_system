@@ -20,6 +20,7 @@ class ShopController extends Controller
         return view('user.shop.home', compact('products', 'vendor'));
     }
 
+
     public function shoping($name)
     {
         $vendor = Vendor::where('shop_name', $name)->firstOrFail();

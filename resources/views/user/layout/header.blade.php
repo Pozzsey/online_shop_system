@@ -14,7 +14,7 @@
             <li><a href="blog.html">Blog</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li id="lg-bag"><a href="cart.html"><i class="far fa-shopping-bag"></i></a></li>
+            <li id="lg-bag"><a class="{{ request()->routeIs('cart.index') ? 'active' : '' }}" href="{{ route('cart.index',['name' => Auth::user()->vendor->shop_name]  ) }}"><i class="far fa-shopping-bag"></i></a></li>
             <a href="#" id="close"><i class="far fa-times"></i></a>
         </ul>
     </div>
@@ -28,3 +28,4 @@
         <i id="bar" class="fas fa-outdent"></i>
     </div>
 </section>
+

@@ -21,11 +21,11 @@ class UserMiddleware
             if (Auth::user()->is_role == '0'){
                 return $next($request);
             } else {
-                return redirect(url('auth.login'));
+                return redirect()->route('login');
             }
         } else {
             Auth::logout();
-            return redirect(url('auth.login'));
+            return redirect()->route('register');
         }
     }
 }
